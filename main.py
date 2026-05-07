@@ -95,7 +95,7 @@ class ConversationManager:
     def create_topic(self, topic_name: str) -> bool:
         """创建新主题"""
         if topic_name in self.topics:
-            print(f"主题 '{topic_name}' 已存在")
+            print(f"主题 '{topic_name}' 已存在！")
             return False
 
         self.topics[topic_name] = []
@@ -106,7 +106,7 @@ class ConversationManager:
     def switch_topic(self, topic_name: str) -> bool:
         """切换到指定主题"""
         if topic_name not in self.topics:
-            print(f"主题 '{topic_name}' 不存在，请先创建")
+            print(f"主题 '{topic_name}' 不存在，请先创建！")
             return False
 
         self.current_topic = topic_name
@@ -116,7 +116,7 @@ class ConversationManager:
     def delete_topic(self, topic_name: str) -> bool:
         """删除主题"""
         if topic_name not in self.topics:
-            print(f"主题 '{topic_name}' 不存在")
+            print(f"主题 '{topic_name}' 不存在！")
             return False
 
         filepath = os.path.join(self.history_dir, f"{topic_name}.json")
@@ -138,7 +138,7 @@ class ConversationManager:
     def add_message(self, role: str, content: str):
         """添加消息到当前主题"""
         if self.current_topic is None:
-            print("请先创建或切换到一个主题")
+            print("请先创建或切换到一个主题！")
             return False
 
         message = {
@@ -177,7 +177,7 @@ class ConversationManager:
     def display_conversation(self):
         """显示当前对话记录"""
         if self.current_topic is None or self.current_topic not in self.topics:
-            print("当前没有激活的主题")
+            print("当前没有激活的主题！")
             return
 
         print(f"\n===== 主题: {self.current_topic} =====")

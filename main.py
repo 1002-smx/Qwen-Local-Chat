@@ -57,7 +57,17 @@ model = AutoModelForCausalLM.from_pretrained(
     offload_folder=offload_dir
 ).eval()
 
-SYSTEM_PROMPT = "你是一个存在于用户电脑的AI助手，你需要认真回答用户的问题和接受用户的要求。"
+
+def time_now():
+    """获取计算机时间"""
+    times = datetime.now()
+    return f"{times}  {times.strftime('%A')}"
+
+
+def SYSTEM_PROMPT():
+    """实时更改人设，获取最新时间"""
+    return (f"你是一个存在于用户电脑的AI助手，你需要认真回答用户的问题和接受用户的要求。"
+            f"如果用户询问与时间有关的问题，请使用程序获取的用户的计算机时间，不要使用数据库里的时间，不用管时区之类的，时间：{time_now()}")
 
 class ConversationManager:
     """对话管理器，支持多主题和对话记录保存"""
@@ -95,7 +105,7 @@ class ConversationManager:
     def create_topic(self, topic_name: str) -> bool:
         """创建新主题"""
         if topic_name in self.topics:
-            print(f"主题 '{topic_name}' 已存在！")
+            print(f"主题 '{topic_name}' 已存在")
             return False
 
         self.topics[topic_name] = []
@@ -106,7 +116,7 @@ class ConversationManager:
     def switch_topic(self, topic_name: str) -> bool:
         """切换到指定主题"""
         if topic_name not in self.topics:
-            print(f"主题 '{topic_name}' 不存在，请先创建！")
+            print(f"主题 '{topic_name}' 不存在，请先创建")
             return False
 
         self.current_topic = topic_name
@@ -116,7 +126,7 @@ class ConversationManager:
     def delete_topic(self, topic_name: str) -> bool:
         """删除主题"""
         if topic_name not in self.topics:
-            print(f"主题 '{topic_name}' 不存在！")
+            print(f"主题 '{topic_name}' 不存在")
             return False
 
         filepath = os.path.join(self.history_dir, f"{topic_name}.json")
@@ -160,7 +170,7 @@ class ConversationManager:
         if max_messages:
             messages = messages[-max_messages:]
 
-        prompt = f"<|im_start|>system\n{SYSTEM_PROMPT}<|im_end|>\n"
+        prompt = f"<|im_start|>system\n{SYSTEM_PROMPT()}<|im_end|>\n"
 
         # 添加历史对话
         for msg in messages:
@@ -242,6 +252,7 @@ def show_help():
     print("  /delete 名称    - 删除主题")
     print("  /history        - 显示当前对话记录")
     print("  /clear          - 清空屏幕")
+    print("  /times          - 获取当前时间")
     print("  /quit           - 退出程序")
     print(" 直接输入文本     - 与AI对话")
     print("=" * 60)
@@ -325,6 +336,9 @@ def main():
                 elif cmd == '/clear':
                     os.system('cls' if os.name == 'nt' else 'clear')
                     print("屏幕已清空！")
+
+                elif cmd == '/times':
+                    print(f"现在时间是：{time_now()}")
 
                 else:
                     print(f"未知命令: {cmd}，输入 /help 查看帮助！")
